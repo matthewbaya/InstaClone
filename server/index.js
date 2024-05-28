@@ -1,5 +1,9 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
+const {
+  typeDefs: userTypeDefs,
+  resolvers: userResolvers,
+} = require("./schema/user");
 
 const books = [
   {
@@ -79,8 +83,8 @@ const resolvers = {
 };
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  typeDefs: [userTypeDefs],
+  resolvers: [userResolvers],
 });
 
 startStandaloneServer(server, {
