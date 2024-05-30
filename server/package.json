@@ -13,10 +13,12 @@
     "@apollo/server": "^4.10.4",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
     "graphql": "^16.8.1",
     "graphql-constraint-directive": "^5.4.3",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.6.2",
-    "nodemon": "^3.1.1"
+    "nodemon": "^3.1.1",
+    "validator": "^13.12.0"
   }
 }

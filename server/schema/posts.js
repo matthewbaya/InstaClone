@@ -1,28 +1,25 @@
-const { ApolloServer } = require("@apollo/server");
-const { startStandaloneServer } = require("@apollo/server/standalone");
-
 const typeDefs = `#graphql
 
   type Post {
-    _id: Int
+    _id: ID
     content: String
-    tags: [Tags]
+    tags: [String]
     imgUrl: String
-    authorId: Int
-    comments: [Comments]
-    likes: [Likes]
+    authorId: String
+    comments: [Comment]
+    likes: [Like]
     createdAt: Date
     updatedAt: Date
   }
 
-  type Comments{
+  type Comment{
     content: String
     username: String
     createdAt: Date
     updatedAt: Date
   }
 
-  type Likes{
+  type Like{
     username: String
     createdAt: Date
     updatedAt: Date
