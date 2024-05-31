@@ -1,31 +1,116 @@
+const { ObjectId } = require("mongodb");
+const Posts = require("../models/Post");
+const Users = require("../models/User");
+
 const typeDefs = `#graphql
 
-  type Post {
+type Posts {
     _id: ID
     content: String
     tags: [String]
-    imgUrl: String
     authorId: String
-    comments: [Comment]
-    likes: [Like]
-    createdAt: Date
-    updatedAt: Date
+    imgUrl: String
+    comments:[comment]
+    likes:[like]
+    author: Author
   }
+  type Author {
+    _id: ID
+    name: String
+    username: String
+    email: String
+    }
 
-  type Comment{
+  input newPost {
     content: String
-    username: String
-    createdAt: Date
-    updatedAt: Date
+    tags: [String]
+    imgUrl: String
   }
 
-  type Like{
-    username: String
-    createdAt: Date
-    updatedAt: Date
-  }
+  type comment{
+    content:String
 
+    username:String
+  }
+  type like{
+
+    username:String
+  }
+ 
+ input newComment{
+    content:String
+    
+ }
+  
+  
   type Query {
-    getPosts: [Post]
+    findAllPost: [Posts]
+    findPostById(_id:ID!): Posts
+   
+  }
+
+  type Mutation {
+    createPost(newPost:newPost):Posts
+    addComment(postId: ID!, newComment: newComment): Posts
+    likePost(postId: ID!,): Posts
   }
 `;
+
+const resolvers = {
+  Query: {
+    findAllPost: async (_, __, contextValue) => {
+      try {
+        await contextValue.authentication();
+
+        const result = await Posts.findAllPost();
+        return result;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    findPostById: async (_, { _id }, contextValue) => {
+      await contextValue.authentication();
+      const id = new ObjectId(_id);
+
+      const result = await Posts.findPostById(id);
+
+      return result;
+    },
+  },
+  Mutation: {
+    createPost: async (_, { newPost }, contextValue) => {
+      const data = await contextValue.authentication();
+
+      const result = await Posts.createPost({ ...newPost, authorId: data.id });
+      return result;
+    },
+    addComment: async (_, { postId, newComment }, contextValue) => {
+      const data = await contextValue.authentication();
+      const id = new ObjectId(postId);
+      const userId = new ObjectId(data.id);
+      const user = await Users.findById(userId);
+
+      const realComment = {
+        content: newComment.content,
+        username: user.username,
+      };
+      const post = await Posts.addComment(id, realComment);
+      return post;
+    },
+    likePost: async (_, { postId }, contextValue) => {
+      const data = await contextValue.authentication();
+      const id = new ObjectId(postId);
+      const userId = new ObjectId(data.id);
+      const user = await Users.findById(userId);
+
+      const data1 = {
+        username: user.username,
+      };
+
+      const post = await Posts.addLike(id, data1);
+      return post;
+    },
+  },
+};
+
+module.exports = { typeDefs, resolvers };

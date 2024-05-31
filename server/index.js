@@ -5,6 +5,14 @@ const {
   resolvers: userResolvers,
 } = require("./schema/user");
 
+const {
+  typeDefs: postTypeDefs,
+  resolvers: postResolvers,
+} = require("./schema/posts");
+const {
+  typeDefs: followTypeDefs,
+  resolvers: followResolvers,
+} = require("./schema/follow");
 const books = [
   {
     title: "The Awakening",
@@ -83,10 +91,36 @@ const resolvers = {
 };
 
 const server = new ApolloServer({
-  typeDefs: [userTypeDefs],
-  resolvers: [userResolvers],
+  typeDefs: [userTypeDefs, postTypeDefs, followTypeDefs],
+  resolvers: [userResolvers, postResolvers, followResolvers],
 });
 
 startStandaloneServer(server, {
   listen: { port: 3000 },
+  context: async ({ req, res }) => {
+    return {
+      authentication: async () => {
+        const access_token = req.headers.authorization;
+
+        if (!access_token) {
+          throw new GraphQLError("unauthorization", {
+            extensions: {
+              code: "Unauthorization",
+            },
+          });
+        }
+
+        const validToken = verifyToken(access_token);
+        console.log(validToken);
+        if (!validToken) {
+          throw new GraphQLError("unauthorization", {
+            extensions: {
+              code: "Unauthorization",
+            },
+          });
+        }
+        return validToken;
+      },
+    };
+  },
 }).then(({ url }) => [console.log(`🚀  Server ready at: ${url}`)]);

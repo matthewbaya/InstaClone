@@ -1,10 +1,13 @@
+const { ObjectId } = require("mongodb");
+const Follow = require("../models/Follow");
+
 const typeDefs = `#graphql
     type Follow {
         _id: ID
         followingId: ID
         followerId: ID
-        createdAt: Date
-        updatedAt: Date
+        createdAt: String
+        updatedAt: String
         following: FollowDetail 
         follower: FollowDetail
     }
@@ -27,3 +30,37 @@ const typeDefs = `#graphql
 `;
 
 module.exports = typeDefs;
+
+const resolvers = {
+  Query: {
+    findFollowingDetail: async (_, args, contextValue) => {
+      await contextValue.authentication();
+      const { _id } = args;
+
+      return await Follow.findFollowing(_id);
+    },
+
+    findFollowerDetail: async (_, args, contextValue) => {
+      await contextValue.authentication();
+      const { _id } = args;
+
+      return await Follow.findFollower(_id);
+    },
+  },
+
+  Mutation: {
+    followUser: async (_, { followingId }, contextValue) => {
+      const currentUser = await contextValue.authentication();
+      const followerId = new ObjectId(currentUser._id);
+      const followId = new ObjectId(followingId);
+
+      const result = await Follow.createFollow({
+        followerId,
+        followId,
+      });
+      return result;
+    },
+  },
+};
+
+module.exports = { typeDefs, resolvers };

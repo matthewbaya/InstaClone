@@ -7,50 +7,82 @@ import {
   SafeAreaInsetsContext,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+function HomeScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Home Screen</Text>
+    </View>
+  );
+}
+
+function DetailsScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Details Screen</Text>
+    </View>
+  );
+}
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
-    <SafeAreaProvider>
-      <View style={styles.container}>
-        <Text style={styles.headingText}>Login</Text>
-        <StatusBar style="auto" />
+    <NavigationContainer>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.container}>
+            <Text style={styles.headingText}>Login</Text>
+            <StatusBar style="auto" />
 
-        <Image
-          source={{ uri: "https://reactjs.org/logo-og.png" }}
-          style={{
-            width: 100,
-            height: 100,
-            marginBottom: 20,
-            borderRadius: 50,
-            objectFit: "cover",
-          }}
-        />
-        <View style={{ marginBottom: 20 }}>
-          <TextInput
-            style={styles.input}
-            onChangeText={(e) => setEmail(e)}
-            value={email}
-            placeholder="Email"
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={(e) => setPassword(e)}
-            value={password}
-            placeholder="Password"
-            secureTextEntry={true}
-            autoCapitalize="none"
-          />
-        </View>
-        <Button
-          onPress={() => {
-            console.log("You tapped the button!");
-          }}
-          title="Login"
-        />
-      </View>
-    </SafeAreaProvider>
+            <Image
+              source={{ uri: "https://reactjs.org/logo-og.png" }}
+              style={{
+                width: 100,
+                height: 100,
+                marginBottom: 20,
+                borderRadius: 50,
+                objectFit: "cover",
+              }}
+            />
+            <View style={{ marginBottom: 20 }}>
+              <TextInput
+                style={styles.input}
+                onChangeText={(e) => setEmail(e)}
+                value={email}
+                placeholder="Email"
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={(e) => setPassword(e)}
+                value={password}
+                placeholder="Password"
+                secureTextEntry={true}
+                autoCapitalize="none"
+              />
+            </View>
+            <Button
+              onPress={() => {
+                // navigation.navigate("Home");
+                console.log("You tapped the button!");
+              }}
+              title="Login"
+            />
+          </View>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{ title: "Beranak" }}
+            />
+            <Stack.Screen name="Detail" component={DetailsScreen} />
+          </Stack.Navigator>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </NavigationContainer>
   );
 }
 

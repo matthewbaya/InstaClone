@@ -18,51 +18,37 @@ class User {
   static async register(data) {
     let { name, username, email, password } = data;
     const user = this.collection();
+    const emailVal = validator.isEmail(email);
+    if (!emailVal) {
+      throw new Error("Invalid email format");
+    }
+    const minPassLength = validator.isStrongPassword(password, {
+      minLength: 5,
+    });
+    if (!minPassLength) {
+      throw new Error("Minimum password length is 5");
+    }
 
-    const alldata = await this.findAll({});
+    const alldata = await this.findAll();
     const usernameExists = alldata.some((user) => user.username === username);
     if (usernameExists) {
-      throw new GraphQLError("username has been used", {
-        extensions: {
-          code: "BAD_USER_INPUT",
-        },
-      });
+      throw new Error("username has been used");
     }
     const emailExists = alldata.some((user) => user.email === email);
     if (emailExists) {
-      throw new GraphQLError("email has been used", {
-        extensions: {
-          code: "BAD_USER_INPUT",
-        },
-      });
+      throw new Error("email has been used");
     }
     if (name.length === 0) {
-      throw new GraphQLError("name is required", {
-        extensions: {
-          code: "BAD_USER_INPUT",
-        },
-      });
+      throw new Error("name is required");
     }
     if (password.length === 0) {
-      throw new GraphQLError("password is required", {
-        extensions: {
-          code: "BAD_USER_INPUT",
-        },
-      });
+      throw new Error("password is required");
     }
     if (email.length === 0) {
-      throw new GraphQLError("email is required", {
-        extensions: {
-          code: "BAD_USER_INPUT",
-        },
-      });
+      throw new Error("email is required");
     }
     if (username.length === 0) {
-      throw new GraphQLError("username is required", {
-        extensions: {
-          code: "BAD_USER_INPUT",
-        },
-      });
+      throw new Error("username is required");
     }
     const hashedPassword = hashPassword(password);
     const result = await user.insertOne({
@@ -76,11 +62,26 @@ class User {
     // return await this.collection().insertOne(newUser);
   }
 
-  static async loginUser(id) {
-    return await database.collection("Users").findOne(id);
+  static async loginUser(email) {
+    const user = this.collection();
+    const result = await user.findOne({ email });
+    return result;
   }
   static async findOne(user) {
     return await database.collection("Users").findOne(user);
+  }
+  static async searchUser(criteria) {
+    const user = await this.collection();
+    const regexCriteria = new RegExp(criteria, "i");
+    const result = await user
+      .find({
+        $or: [
+          { name: { $regex: regexCriteria } },
+          { username: { $regex: regexCriteria } },
+        ],
+      })
+      .toArray();
+    return result;
   }
 }
 module.exports = User;

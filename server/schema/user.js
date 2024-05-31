@@ -1,5 +1,4 @@
 const bcrypt = require("bcryptjs");
-const { GraphQLError } = require("graphql");
 
 const Users = require("../models/User");
 const { signToken } = require("../helpers/jwt");
@@ -37,7 +36,6 @@ const typeDefs = `#graphql
   type Query {
     findAllUser: [User]
     findUserById(_id: ID!): User
-    findCurrentLogin: User
     searchUser(criteria: String!): [User]
   }
 
@@ -49,11 +47,14 @@ const typeDefs = `#graphql
 
 const resolvers = {
   Query: {
-    findAllUser: async (_, __, contextValue) => {
-      const data = await contextValue.authentication();
-      console.log(data);
+    findAllUser: async (_, args) => {
       const result = await Users.findAll();
       return result;
+    },
+    searchUser: async (_, { criteria }) => {
+      // Implementasi untuk mencari pengguna berdasarkan kriteria pencarian
+      const users = await Users.searchUser(criteria);
+      return users;
     },
   },
   Mutation: {
@@ -67,19 +68,11 @@ const resolvers = {
       const validEmail = await Users.loginUser(email);
 
       if (!validEmail) {
-        throw new GraphQLError("email/password is incorrect", {
-          extensions: {
-            code: "BAD_USER_INPUT",
-          },
-        });
+        throw new Error("email/password is incorrect");
       }
-      const validPassword = bcrypt.compareSync(password, validEmail.password); // Bandingkan password yang diterima dengan password yang disimpan
+      const validPassword = bcrypt.compareSync(password, validEmail.password);
       if (!validPassword) {
-        throw new GraphQLError("email/password is incorrect", {
-          extensions: {
-            code: "BAD_USER_INPUT",
-          },
-        });
+        throw new Error("email/password is incorrect");
       }
 
       const access_token = signToken({
