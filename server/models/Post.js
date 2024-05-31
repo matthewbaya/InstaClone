@@ -8,7 +8,28 @@ class Posts {
 
   static async findAllPost() {
     const post = this.collection();
-    const data = await post.find().toArray();
+    const data = await post
+      .aggregate([
+        {
+          $lookup: {
+            from: "Users",
+            localField: "authorId",
+            foreignField: "_id",
+            as: "author",
+          },
+        },
+        {
+          $unwind: {
+            path: "$author",
+          },
+        },
+        {
+          $project: {
+            "author.password": 0,
+          },
+        },
+      ])
+      .toArray();
     return data;
   }
   static async createPost(data) {
