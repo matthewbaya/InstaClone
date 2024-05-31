@@ -18,7 +18,7 @@ function HomeScreen({ navigation }) {
   );
 }
 
-function DetailsScreen() {
+function DetailsScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text>Details Screen</Text>
