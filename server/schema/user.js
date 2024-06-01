@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const validator = require("validator");
 
 const Users = require("../models/User");
 const { signToken } = require("../helpers/jwt");
@@ -56,9 +57,27 @@ const resolvers = {
       const users = await Users.searchUser(criteria);
       return users;
     },
+    findUserById: async (_, { _id }) => {
+      const id = new ObjectId(_id);
+      const user = await Users.findById(id);
+      console.log(user);
+      console.log(_id);
+      if (!user) {
+        throw new Error("Unauthorized");
+      }
+      return user;
+    },
   },
   Mutation: {
     Register: async (_, { newUsers }) => {
+      const minPassLength = validator.isByteLength(newUsers.password, {
+        min: 5,
+      });
+      console.log(newUsers.password.length);
+      console.log(minPassLength);
+      if (!minPassLength) {
+        throw new Error("Minimum password length is 5");
+      }
       const result = await Users.register(newUsers);
       return result;
     },

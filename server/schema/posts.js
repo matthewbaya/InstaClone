@@ -1,7 +1,7 @@
 const { ObjectId } = require("mongodb");
 const Posts = require("../models/Post");
 const Users = require("../models/User");
-
+const redis = require("../config/redis");
 const typeDefs = `#graphql
 
 type Posts {
@@ -61,8 +61,12 @@ const resolvers = {
     findAllPost: async (_, __, contextValue) => {
       try {
         await contextValue.authentication();
-
+        const cache = await redis.get("post:all");
+        if (cache) {
+          return JSON.parse(cache);
+        }
         const result = await Posts.findAllPost();
+        await redis.set("post:all", JSON.stringify(result));
         return result;
       } catch (error) {
         console.log(error);
@@ -82,6 +86,7 @@ const resolvers = {
       const data = await contextValue.authentication();
 
       const result = await Posts.createPost({ ...newPost, authorId: data.id });
+      await redis.del("post:all");
       return result;
     },
     addComment: async (_, { postId, newComment }, contextValue) => {
@@ -95,6 +100,7 @@ const resolvers = {
         username: user.username,
       };
       const post = await Posts.addComment(id, realComment);
+      await redis.del("post:all");
       return post;
     },
     likePost: async (_, { postId }, contextValue) => {
@@ -108,6 +114,7 @@ const resolvers = {
       };
 
       const post = await Posts.addLike(id, data1);
+      await redis.del("post:all");
       return post;
     },
   },

@@ -22,12 +22,6 @@ class User {
     if (!emailVal) {
       throw new Error("Invalid email format");
     }
-    const minPassLength = validator.isStrongPassword(password, {
-      minLength: 5,
-    });
-    if (!minPassLength) {
-      throw new Error("Minimum password length is 5");
-    }
 
     const alldata = await this.findAll();
     const usernameExists = alldata.some((user) => user.username === username);

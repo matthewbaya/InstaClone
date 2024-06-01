@@ -1,9 +1,41 @@
 const { ObjectId } = require("mongodb");
-const database = require("../config/mongodb");
+const { database } = require("../config/mongodb");
+const redis = require("../config/redis");
 
 class Posts {
   static collection() {
     return database.collection("Posts");
+  }
+  static async findPostById(_id) {
+    const post = this.collection();
+    const data = await post
+      .aggregate([
+        {
+          $match: {
+            _id: new ObjectId(_id),
+          },
+        },
+        {
+          $lookup: {
+            from: "Users",
+            localField: "authorId",
+            foreignField: "_id",
+            as: "author",
+          },
+        },
+        {
+          $unwind: {
+            path: "$author",
+          },
+        },
+        {
+          $project: {
+            "author.password": 0,
+          },
+        },
+      ])
+      .toArray();
+    return data[0];
   }
 
   static async findAllPost() {
@@ -42,7 +74,8 @@ class Posts {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-
+    console.log(result);
+    // return result;
     const findOne = this.findPostById(result.insertedId);
     return findOne;
   }

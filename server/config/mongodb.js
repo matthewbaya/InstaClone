@@ -13,4 +13,4 @@ const client = new MongoClient(uri, {
 
 const database = client.db("P3-challenge-1");
 
-module.exports = { database };
+module.exports = { database, client };
