@@ -11,6 +11,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
 import DetailsScreen from "./screens/DetailScreen";
+import RegisterScreen from "./screens/RegisterScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,7 @@ export default function App({ navigation }) {
   return (
     <NavigationContainer>
       <Stack.Navigator
+        initialRouteName="Register"
         screenOptions={{
           headerStyle: {
             backgroundColor: "#f4511e",
@@ -28,6 +30,7 @@ export default function App({ navigation }) {
           },
         }}
       >
+        <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen
           name="Home"

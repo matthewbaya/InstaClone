@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { StyleSheet, Text, View, Image, Button, TextInput } from "react-native";
-import { StatusBar } from "expo-status-bar";
 
-export default function LoginScreen({ navigation }) {
+export default function CreatePostScreen({ navigation, route }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
@@ -38,7 +36,8 @@ export default function LoginScreen({ navigation }) {
       </View>
       <Button
         onPress={() => {
-          navigation.navigate("Register");
+          navigation.navigate("Home");
+          console.log("You tapped the button!");
         }}
         title="Login"
       />

@@ -2,12 +2,14 @@ import { useState } from "react";
 import { StyleSheet, Text, View, Image, Button, TextInput } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
-export default function LoginScreen({ navigation }) {
+export default function RegisterScreen({ navigation }) {
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
     <View style={styles.container}>
-      <Text style={styles.headingText}>Login</Text>
+      <Text style={styles.headingText}>Register</Text>
       <StatusBar style="auto" />
 
       <Image
@@ -21,6 +23,18 @@ export default function LoginScreen({ navigation }) {
         }}
       />
       <View style={{ marginBottom: 20 }}>
+        <TextInput
+          style={styles.input}
+          onChangeText={(e) => setName(e)}
+          value={name}
+          placeholder="Name"
+        />
+        <TextInput
+          style={styles.input}
+          onChangeText={(e) => setUsername(e)}
+          value={username}
+          placeholder="Username"
+        />
         <TextInput
           style={styles.input}
           onChangeText={(e) => setEmail(e)}
@@ -38,9 +52,9 @@ export default function LoginScreen({ navigation }) {
       </View>
       <Button
         onPress={() => {
-          navigation.navigate("Register");
+          navigation.navigate("Home");
         }}
-        title="Login"
+        title="Register"
       />
     </View>
   );
