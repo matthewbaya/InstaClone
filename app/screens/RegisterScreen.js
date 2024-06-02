@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, Image, Button, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Button,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 export default function RegisterScreen({ navigation }) {
@@ -52,10 +60,20 @@ export default function RegisterScreen({ navigation }) {
       </View>
       <Button
         onPress={() => {
-          navigation.navigate("Home");
+          navigation.navigate("Login");
         }}
         title="Register"
       />
+      <Text>
+        Already have an account?
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Login");
+          }}
+        >
+          <Text style={styles.link}>Login</Text>
+        </TouchableOpacity>
+      </Text>
     </View>
   );
 }
@@ -77,5 +95,9 @@ const styles = StyleSheet.create({
   headingText: {
     fontSize: 30,
     marginBottom: 20,
+  },
+  link: {
+    fontSize: 18,
+    color: "blue",
   },
 });

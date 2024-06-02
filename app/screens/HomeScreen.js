@@ -1,73 +1,84 @@
-import { StyleSheet, Text, View, Image, Button, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Button,
+  TextInput,
+  ScrollView,
+} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useQuery, gql } from "@apollo/client";
 import DetailsScreen from "./DetailScreen";
+import PostCard from "../components/PostCard";
+import SearchUserScreen from "./SearchUserScreen";
+import ProfileScreen from "./ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
-function PostScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-}
+const GET_POSTS = gql`
+  query FindAllPost {
+    findAllPost {
+      _id
+      author {
+        name
+        username
+      }
+      content
+      imgUrl
+    }
+  }
+`;
+// function PostScreen() {
+//   return (
+//     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+//       <Text>Home Screen</Text>
+//     </View>
+//   );
+// }
 
-function ProfileScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-}
+// function ProfileScreen() {
+//   return (
+//     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+//       <Text>Home Screen</Text>
+//     </View>
+//   );
+// }
 
 export default function HomeScreen({ navigation }) {
-  const data = [
-    {
-      id: 1,
-      title: "nigga",
-    },
-    {
-      id: 2,
-      title: "nigga",
-    },
-    {
-      id: 3,
-      title: "nigga",
-    },
-    {
-      id: 4,
-      title: "nigga",
-    },
-  ];
+  const { loading, error, data } = useQuery(GET_POSTS);
+
   return (
     <>
-      <View style={styles.container}>
-        {data.map((e) => {
-          return (
-            <View key={e.id}>
-              <Text>Data {e.id}</Text>
-              <Button
-                onPress={() => {
-                  navigation.navigate("Detail", { id: e.id });
-                }}
-                title="Detail"
-              ></Button>
-            </View>
-          );
-        })}
+      <ScrollView>
+        <View style={styles.postContainer}>
+          {data?.findAllPost.map((e, id) => {
+            return <PostCard key={id} post={e}></PostCard>;
+          })}
+        </View>
+      </ScrollView>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#EEEEEE",
+          gap: 10,
+          paddingHorizontal: 10,
+          marginBottom: 50,
+        }}
+      >
+        <Tab.Navigator>
+          <Tab.Screen
+            name="SearchUser"
+            component={SearchUserScreen}
+            options={{ title: "Search" }}
+          />
+          <Tab.Screen
+            name="Profile Screen"
+            component={ProfileScreen}
+            options={{ title: "Profile" }}
+          />
+        </Tab.Navigator>
       </View>
-      <Tab.Navigator>
-        <Tab.Screen
-          name="Post Screen"
-          component={PostScreen}
-          options={{ headerShown: false, title: "Posts" }}
-        />
-        <Tab.Screen
-          name="Profile Screen"
-          component={ProfileScreen}
-          options={{ headerShown: false, title: "Profile" }}
-        />
-      </Tab.Navigator>
     </>
   );
 }
@@ -77,6 +88,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#EEEEEE",
     alignItems: "center",
+  },
+  postContainer: {
+    flex: 1,
+    backgroundColor: "#EEEEEE",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    marginBottom: 20,
   },
   input: {
     height: 40,

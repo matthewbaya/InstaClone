@@ -12,34 +12,43 @@ import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
 import DetailsScreen from "./screens/DetailScreen";
 import RegisterScreen from "./screens/RegisterScreen";
-
+import CreatePostScreen from "./screens/CreatePost";
+import SearchUserScreen from "./screens/SearchUserScreen";
+import ProfileScreen from "./screens/ProfileScreen";
+import { ApolloProvider } from "@apollo/client";
+import client from "./config/apollo";
 const Stack = createNativeStackNavigator();
 
 export default function App({ navigation }) {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Register"
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: "#f4511e",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-        }}
-      >
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ title: "Beranda" }}
-        />
-        <Stack.Screen name="Detail" component={DetailsScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ApolloProvider client={client}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: "#f4511e",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
+        >
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ title: "Beranda" }}
+          />
+          <Stack.Screen name="Detail" component={DetailsScreen} />
+          <Stack.Screen name="CreatePost" component={CreatePostScreen} />
+          <Stack.Screen name="SearchUser" component={SearchUserScreen} />
+          <Stack.Screen name="UserProfile" component={ProfileScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ApolloProvider>
   );
 }
 

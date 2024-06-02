@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, Image, Button, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Button,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 export default function LoginScreen({ navigation }) {
@@ -38,10 +46,17 @@ export default function LoginScreen({ navigation }) {
       </View>
       <Button
         onPress={() => {
-          navigation.navigate("Register");
+          navigation.navigate("Home");
         }}
         title="Login"
       />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Register");
+        }}
+      >
+        <Text style={styles.link}>Create a new account</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -63,5 +78,8 @@ const styles = StyleSheet.create({
   headingText: {
     fontSize: 30,
     marginBottom: 20,
+  },
+  link: {
+    color: "blue",
   },
 });

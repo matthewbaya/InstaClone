@@ -60,7 +60,7 @@ const resolvers = {
   Query: {
     findAllPost: async (_, __, contextValue) => {
       try {
-        await contextValue.authentication();
+        // await contextValue.authentication();
         const cache = await redis.get("post:all");
         if (cache) {
           return JSON.parse(cache);
@@ -73,7 +73,7 @@ const resolvers = {
       }
     },
     findPostById: async (_, { _id }, contextValue) => {
-      await contextValue.authentication();
+      // await contextValue.authentication();
       const id = new ObjectId(_id);
 
       const result = await Posts.findPostById(id);
